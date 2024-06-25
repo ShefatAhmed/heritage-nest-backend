@@ -24,6 +24,9 @@ async function run() {
     const propertyCollection = client
       .db("Heritage_Nest")
       .collection("property");
+    const testimonialCollection = client
+      .db("Heritage_Nest")
+      .collection("testimonial");
 
     //property
     app.post("/property", async (req, res) => {
@@ -43,6 +46,18 @@ async function run() {
         .find()
         .sort({ createdAt: -1 })
         .toArray();
+      res.send(result);
+    });
+
+    // testimonial
+    app.post("/testimonial", async (req, res) => {
+      const result = req.body;
+      const data = await testimonialCollection.insertOne(result);
+      res.send(data);
+    });
+
+    app.get("/testimonial", async (req, res) => {
+      const result = await testimonialCollection.find().toArray();
       res.send(result);
     });
 
