@@ -20,9 +20,31 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect to MongoDB
-    await client.connect();
-    console.log("Connected to MongoDB");
-    const db = client.db("Heritage_Nest");
+    // await client.connect();
+    const propertyCollection = client
+      .db("Heritage_Nest")
+      .collection("property");
+
+    //property
+    app.post("/property", async (req, res) => {
+      const result = req.body;
+      result.createdAt = new Date();
+      const data = await propertyCollection.insertOne(result);
+      res.send(data);
+    });
+
+    app.get("/property", async (req, res) => {
+      const result = await propertyCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/recent-property", async (req, res) => {
+      const result = await propertyCollection
+        .find()
+        .sort({ createdAt: -1 })
+        .toArray();
+      res.send(result);
+    });
 
     // Start the server
     app.listen(port, () => {
